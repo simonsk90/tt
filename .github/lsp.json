@@ -1,0 +1,63 @@
+{
+  "$schema": "https://raw.githubusercontent.com/OmniSharp/omnisharp-roslyn/master/src/OmniSharp.LanguageServerProtocol/schema/lsp-settings.json",
+  "omnisharp": {
+    "enableRoslynAnalyzers": true,
+    "enableEditorConfigSupport": true,
+    "enableImportCompletion": true,
+    "organizeImportsOnFormat": true,
+    "useModernNet": true,
+    "sdkIncludePrereleases": false,
+    "analyzeOpenDocumentsOnly": false
+  },
+  "csharp": {
+    "inlayHints": {
+      "parameters": {
+        "enabled": true,
+        "forLiteralParameters": true,
+        "forIndexerParameters": true,
+        "forObjectCreationParameters": true,
+        "forOtherParameters": true,
+        "suppressForParametersThatDifferOnlyBySuffix": false,
+        "suppressForParametersThatMatchMethodIntent": false,
+        "suppressForParametersThatMatchArgumentName": true
+      },
+      "types": {
+        "enabled": true,
+        "forImplicitVariableTypes": true,
+        "forLambdaParameterTypes": true,
+        "forImplicitObjectCreation": true
+      }
+    },
+    "referencesCodeLens": {
+      "filteredSymbols": ["String"]
+    },
+    "format": {
+      "enable": true
+    }
+  },
+  "dotnet": {
+    "defaultSolution": "TT.BackendTransformation.sln",
+    "completion": {
+      "showCompletionItemsFromUnimportedNamespaces": true,
+      "showNameCompletionSuggestions": true
+    },
+    "codeLens": {
+      "enableReferencesCodeLens": true,
+      "enableTestsCodeLens": true
+    },
+    "unitTestDebuggingOptions": {},
+    "backgroundAnalysis": {
+      "analyzerDiagnosticsScope": "fullSolution",
+      "compilerDiagnosticsScope": "fullSolution"
+    }
+  },
+  "ai": {
+    "notes": [
+      "This project uses Clean Architecture. Domain has NO external NuGet dependencies.",
+      "Read .github/instructions.md before modifying any C# file.",
+      "Read .github/topics/<area>.md before modifying domain or infrastructure logic.",
+      "Prefer IRequest<T> command/query pattern over direct service calls.",
+      "Domain events are dispatched by AppDbContext.SaveChangesAsync — never manually."
+    ]
+  }
+}

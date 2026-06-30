@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "dgSpecHash": "l8IHpMqwz04=",
+  "success": true,
+  "projectFilePath": "/home/simon/repos/tt/src/TT.Infrastructure/TT.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "/home/simon/.nuget/packages/hangfire.aspnetcore/1.8.20/hangfire.aspnetcore.1.8.20.nupkg.sha512",
+    "/home/simon/.nuget/packages/hangfire.core/1.8.20/hangfire.core.1.8.20.nupkg.sha512",
+    "/home/simon/.nuget/packages/hangfire.inmemory/0.8.0/hangfire.inmemory.0.8.0.nupkg.sha512",
+    "/home/simon/.nuget/packages/hangfire.netcore/1.8.20/hangfire.netcore.1.8.20.nupkg.sha512",
+    "/home/simon/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
+    "/home/simon/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.entityframeworkcore/9.0.6/microsoft.entityframeworkcore.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.entityframeworkcore.abstractions/9.0.6/microsoft.entityframeworkcore.abstractions.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.6/microsoft.entityframeworkcore.analyzers.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.entityframeworkcore.inmemory/9.0.6/microsoft.entityframeworkcore.inmemory.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.6/microsoft.extensions.caching.abstractions.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.caching.memory/9.0.6/microsoft.extensions.caching.memory.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.configuration.abstractions/3.0.0/microsoft.extensions.configuration.abstractions.3.0.0.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.6/microsoft.extensions.dependencyinjection.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/9.0.6/microsoft.extensions.dependencyinjection.abstractions.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.fileproviders.abstractions/3.0.0/microsoft.extensions.fileproviders.abstractions.3.0.0.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.hosting.abstractions/3.0.0/microsoft.extensions.hosting.abstractions.3.0.0.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.logging/9.0.6/microsoft.extensions.logging.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.logging.abstractions/9.0.6/microsoft.extensions.logging.abstractions.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.options/9.0.6/microsoft.extensions.options.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/microsoft.extensions.primitives/9.0.6/microsoft.extensions.primitives.9.0.6.nupkg.sha512",
+    "/home/simon/.nuget/packages/newtonsoft.json/11.0.1/newtonsoft.json.11.0.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "Package 'Newtonsoft.Json' 11.0.1 has a known high severity vulnerability, https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
+      "projectPath": "/home/simon/repos/tt/src/TT.Infrastructure/TT.Infrastructure.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/simon/repos/tt/src/TT.Infrastructure/TT.Infrastructure.csproj",
+      "libraryId": "Newtonsoft.Json",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}

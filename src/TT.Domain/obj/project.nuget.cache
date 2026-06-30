@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "QQDS/ATJtP4=",
+  "success": true,
+  "projectFilePath": "/home/simon/repos/tt/src/TT.Domain/TT.Domain.csproj",
+  "expectedPackageFiles": [
+    "/home/simon/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

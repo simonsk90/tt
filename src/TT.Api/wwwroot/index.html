@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TT.BackendTransformation · Robot Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="badge">IoT Robot Backend · Clean Architecture Demo</div>
+      <h1>TT Backend<br /><span class="accent">Transformation</span></h1>
+      <p class="subtitle">Event-driven field marking pipeline powered by MediatR &amp; Hangfire</p>
+    </header>
+
+    <section class="control-panel">
+      <button id="startBtn" class="btn-start" onclick="startFieldMarking()">
+        <span class="btn-icon">🤖</span> Start Field Marking
+      </button>
+      <div id="statusMsg" class="status-msg hidden"></div>
+    </section>
+
+    <section class="terminal-section">
+      <div class="terminal-header">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="terminal-title">Server Event Log</span>
+        <button class="btn-clear" onclick="clearLog()">Clear</button>
+      </div>
+      <div id="terminal" class="terminal">
+        <div class="terminal-placeholder">Waiting for events… Press "Start Field Marking" to begin.</div>
+      </div>
+    </section>
+
+    <section class="arch-section">
+      <h2>Event Chain</h2>
+      <ol class="chain">
+        <li><span class="tag cmd">Command</span> StartFieldMarkingCommand</li>
+        <li><span class="tag evt">Domain Event</span> FieldMarkingStarted</li>
+        <li><span class="tag job">Background Job</span> TrackGpsProgress</li>
+        <li><span class="tag evt">Domain Event</span> RouteCompleted</li>
+        <li><span class="tag job">Background Job</span> PushStatisticsToCloud</li>
+        <li><span class="tag job">Background Job</span> SendNotificationCommand</li>
+      </ol>
+    </section>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
