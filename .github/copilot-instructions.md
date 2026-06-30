@@ -88,4 +88,10 @@ This solution follows **Clean Architecture** with **Domain-Driven Design (DDD)**
 
 ## Available Agents
 
-See `.github/agents.md` for the `Architect Agent`, `Domain Expert Agent`, and `Infrastructure Agent` skill sets.
+Use `/agent` to browse or select an agent. Three custom agents are defined in `.github/agents/`:
+
+| Agent | File | Use for |
+|-------|------|---------|
+| `architect` | `architect.agent.md` | Architecture boundary reviews, preventing layer leakage |
+| `domain-expert` | `domain-expert.agent.md` | Rich domain models, invariants, aggregate design |
+| `infrastructure` | `infrastructure.agent.md` | EF Core, Hangfire, SSE configuration and safety |
