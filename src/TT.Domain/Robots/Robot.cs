@@ -1,6 +1,5 @@
 using TT.Domain.Abstractions;
 using TT.Domain.Events;
-using TT.Domain.Robots;
 
 namespace TT.Domain.Robots;
 
