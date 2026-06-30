@@ -18,14 +18,27 @@ TT.Infrastructure → EF Core + Hangfire; must NOT be referenced by Domain or Ap
 TT.Api            → Composition root only; no business logic
 ```
 
-## What to check
+## CRITICAL RULE: No Hangfire Job Chaining for independent features
 
-- `TT.Domain` must have zero `<PackageReference>` entries except `MediatR.Contracts`.
-- No `using Microsoft.EntityFrameworkCore` inside `TT.Domain` or `TT.Application`.
-- `AppDbContext` must only be referenced from `TT.Infrastructure`.
-- `IRobotRepository` defined in Application, implemented only in Infrastructure.
-- No domain entities returned from API endpoints — DTOs only.
-- Domain events dispatched by `AppDbContext.SaveChangesAsync`, never manually called.
+Background jobs must remain decoupled from each other. Never enqueue a second job from inside a first job to trigger an independent business feature. Use MediatR `INotification` multicast instead — register multiple `INotificationHandler<TEvent>` classes so each runs independently.
+
+**Violation pattern to catch:**
+```csharp
+// ❌ Job chaining — PushStatisticsJob enqueues SendNotificationJob
+public async Task ExecuteAsync(Guid robotId, CancellationToken ct)
+{
+    await PushTelemetry();
+    jobClient.Enqueue<SendNotificationJob>(...); // WRONG — coupling two independent concerns
+}
+```
+
+**Correct pattern:**
+```csharp
+// ✅ Two independent handlers, both triggered by MediatR multicast
+class RouteCompletedPushStatisticsHandler  : INotificationHandler<RouteCompletedEvent> { ... }
+class RouteCompletedSendNotificationHandler : INotificationHandler<RouteCompletedEvent> { ... }
+// PushStatisticsJob only pushes telemetry. SendNotificationJob only sends alerts.
+```
 
 ## Output format
 

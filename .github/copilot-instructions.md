@@ -77,12 +77,20 @@ This solution follows **Clean Architecture** with **Domain-Driven Design (DDD)**
 - Commands and their handlers co-located in `Commands/{Name}/`.
 - Queries and their handlers co-located in `Queries/{Name}/`.
 
-### Domain Events
-1. Raised inside aggregate methods (e.g. `Robot.StartFieldMarking()`).
-2. Collected in `AggregateRoot._domainEvents`.
-3. Dispatched by `AppDbContext.SaveChangesAsync` **after** successful persistence.
-4. Handled by `INotificationHandler<T>` implementations in TT.Application.
-5. Handlers enqueue Hangfire jobs — they do NOT call domain methods directly.
+### Domain Events → Multiple Independent Handlers (CRITICAL)
+
+**Never chain Hangfire jobs** to trigger independent business features. Instead, register multiple `INotificationHandler<TEvent>` classes — MediatR broadcasts to all of them concurrently.
+
+```
+❌ WRONG — Job Chaining (violates SRP, OCP, and fault isolation):
+RouteCompletedEvent → RouteCompletedEventHandler → PushStatisticsJob → [chains to] SendNotificationJob
+
+✅ CORRECT — Event-Driven Multicast:
+RouteCompletedEvent → RouteCompletedPushStatisticsHandler  → PushStatisticsJob   (independent)
+                   ↘ RouteCompletedSendNotificationHandler → SendNotificationJob  (independent)
+```
+
+If the statistics job fails, the notification still fires. Each handler owns exactly one concern.
 
 ---
 

@@ -18,10 +18,35 @@ You own EF Core, Hangfire, and the SSE event log pipeline. You ensure infrastruc
 - Private parameterless constructors present on all aggregates and owned entities for EF materialisation.
 - `GpsCoordinates` requires a public parameterless constructor for InMemory provider materialisation.
 
+## CRITICAL RULE: No Hangfire Job Chaining for independent features
+
+Background jobs must have single responsibility and must NOT enqueue other jobs to trigger independent business features. If multiple things must happen after a domain event, register multiple `INotificationHandler<TEvent>` classes — MediatR broadcasts to all of them in parallel.
+
+**Violation to catch:**
+```csharp
+// ❌ Job chaining — statistics job enqueues notification job
+public async Task ExecuteAsync(Guid robotId, CancellationToken ct)
+{
+    await PushTelemetry();
+    jobClient.Enqueue<SendNotificationJob>(...); // WRONG
+}
+```
+
+**Correct pattern — two independent MediatR handlers:**
+```csharp
+class RouteCompletedPushStatisticsHandler  : INotificationHandler<RouteCompletedEvent> { ... }
+class RouteCompletedSendNotificationHandler : INotificationHandler<RouteCompletedEvent> { ... }
+```
+
+**What to flag:**
+- `IBackgroundJobClient` injected into a job that uses it only to enqueue a sibling job → violation.
+- Each job interface (`IPushStatisticsJob`, `ISendNotificationJob`) must be defined in **Application**, not Infrastructure.
+- Jobs implement exactly one job interface — no job owns two responsibilities.
+
 ## Hangfire checklist
 
 - Jobs registered in DI as `Transient`.
-- Job interfaces (`ITrackGpsProgressJob`, `IPushStatisticsJob`) defined in **Application**, not Infrastructure.
+- Job interfaces defined in **Application**, not Infrastructure.
 - Use `IBackgroundJobClient.Enqueue<TJob>(j => j.Method(...))` — strongly typed, never string-based.
 - `Hangfire.InMemory` for dev/demo; recommend `Hangfire.SqlServer` or `Hangfire.Pro.Redis` in production.
 - Job methods must be `async Task` if they `await` anything.

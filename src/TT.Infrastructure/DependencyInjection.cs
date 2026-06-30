@@ -49,6 +49,7 @@ public static class DependencyInjection
         // Register job interfaces so Application event handlers can inject them
         services.AddTransient<ITrackGpsProgressJob, TrackGpsProgressJob>();
         services.AddTransient<IPushStatisticsJob, PushStatisticsJob>();
+        services.AddTransient<ISendNotificationJob, SendNotificationJob>();
 
         return services;
     }

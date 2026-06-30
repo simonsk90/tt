@@ -1,4 +1,3 @@
-using Hangfire;
 using TT.Application.Abstractions;
 using TT.Application.EventHandlers;
 
@@ -6,14 +5,16 @@ namespace TT.Infrastructure.Jobs;
 
 /// <summary>
 /// Hangfire background job: pushes field marking statistics to a cloud analytics endpoint.
-/// Enqueued by <see cref="RouteCompletedEventHandler"/> after <c>RouteCompletedEvent</c> is raised.
-/// On completion, chains to <see cref="SendNotificationJob"/>.
+/// Enqueued independently by <see cref="RouteCompletedPushStatisticsHandler"/>.
+///
+/// SINGLE RESPONSIBILITY: telemetry serialisation and HTTP dispatch only.
+/// This job must NOT enqueue or chain to any other job.
+/// Downstream concerns (notifications, billing) are triggered by their own independent
+/// MediatR handlers — not by this job.
 ///
 /// Production: call your telemetry API (Azure Monitor, DataDog, etc.) here.
 /// </summary>
-public sealed class PushStatisticsJob(
-    IEventLogger eventLogger,
-    IBackgroundJobClient jobClient) : IPushStatisticsJob
+public sealed class PushStatisticsJob(IEventLogger eventLogger) : IPushStatisticsJob
 {
     public async Task ExecuteAsync(Guid robotId, CancellationToken cancellationToken)
     {
@@ -23,7 +24,6 @@ public sealed class PushStatisticsJob(
         eventLogger.Log("Background Job", "PushStatisticsToCloud: POST /api/v1/telemetry → 200 OK");
         await Task.Delay(500, cancellationToken);
 
-        jobClient.Enqueue<SendNotificationJob>(j => j.ExecuteAsync(robotId, CancellationToken.None));
-        eventLogger.Log("Background Job", "SendNotificationJob enqueued");
+        eventLogger.Log("Background Job", "PushStatisticsToCloud: Complete ✓");
     }
 }

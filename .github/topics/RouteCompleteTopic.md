@@ -70,9 +70,13 @@ a final position cannot be costed, billed, or logged.
 
 ---
 
-## 4. Complete Event Chain
+## 4. Complete Event Chain (Event-Driven Multicast Architecture)
 
 This section describes the full lifecycle from API call to operator notification.
+
+> **ARCHITECTURAL NOTE:** `RouteCompletedEvent` is multicast by MediatR to **two independent handlers simultaneously**.
+> This is intentional — statistics and notifications are separate business concerns.
+> A failure in one pipeline does not affect the other.
 
 ```
 Browser
@@ -100,18 +104,32 @@ Browser
                         └─ Raises RouteCompletedEvent
               └─► AppDbContext.SaveChangesAsync()
                         └─ Publishes RouteCompletedEvent via MediatR
+                                │
+                                ├─ [5a] RouteCompletedPushStatisticsHandler  ──► PushStatisticsJob
+                                │         (telemetry only, fully isolated)
+                                │
+                                └─ [5b] RouteCompletedSendNotificationHandler ──► SendNotificationJob
+                                          (notification only, fully isolated)
 
-  [5] RouteCompletedEventHandler            (Application.EventHandlers)
-        └─► Enqueues PushStatisticsJob      (Hangfire)
+  [5a] PushStatisticsJob                    (Infrastructure.Jobs) — runs in parallel with 5b
+        ├─ Serialises telemetry payload
+        └─ POSTs to cloud analytics endpoint
+           NO chaining. NO awareness of SendNotificationJob.
 
-  [6] PushStatisticsJob                     (Infrastructure.Jobs)
-        ├─ POSTs telemetry to cloud analytics endpoint
-        └─► Enqueues SendNotificationJob    (Hangfire)
-
-  [7] SendNotificationJob                   (Infrastructure.Jobs)
-        └─ Sends operator push notification / webhook
-           Logs "Job complete! 🚀" to EventLogService → SSE → Browser terminal
+  [5b] SendNotificationJob                  (Infrastructure.Jobs) — runs in parallel with 5a
+        └─ Dispatches operator push notification
+           Logs "Job complete! 🚀" → SSE → Browser terminal
+           NO dependency on PushStatisticsJob completing first.
 ```
+
+### Why multicast instead of chaining?
+
+| Concern | Job Chaining ❌ | MediatR Multicast ✅ |
+|---------|----------------|----------------------|
+| Fault isolation | Stats failure blocks notification | Each pipeline fails independently |
+| Open/Closed | Adding a new step requires editing `PushStatisticsJob` | Add a new `INotificationHandler<RouteCompletedEvent>` |
+| Single Responsibility | `PushStatisticsJob` owns two concerns | Each handler and job owns exactly one concern |
+| Testability | Jobs must be tested together | Each handler and job tested in isolation |
 
 ---
 

@@ -6,10 +6,14 @@ using TT.Domain.Events;
 namespace TT.Application.EventHandlers;
 
 /// <summary>
-/// Handles <see cref="RouteCompletedEvent"/> raised by <see cref="TT.Domain.Robots.Robot.CompleteRoute()"/>.
-/// Responsibility: enqueue the statistics push background job.
+/// Handles <see cref="RouteCompletedEvent"/> — responsibility: telemetry only.
+/// Enqueues <see cref="IPushStatisticsJob"/> to push field marking data to the cloud analytics endpoint.
+///
+/// MediatR broadcasts <see cref="RouteCompletedEvent"/> to ALL registered handlers concurrently.
+/// This handler is completely independent of <see cref="RouteCompletedSendNotificationHandler"/>.
+/// If this handler or its job fails, the notification pipeline is unaffected.
 /// </summary>
-public sealed class RouteCompletedEventHandler(
+public sealed class RouteCompletedPushStatisticsHandler(
     IBackgroundJobClient jobClient,
     IEventLogger eventLogger)
     : INotificationHandler<RouteCompletedEvent>
@@ -17,7 +21,7 @@ public sealed class RouteCompletedEventHandler(
     public Task Handle(RouteCompletedEvent notification, CancellationToken cancellationToken)
     {
         eventLogger.Log("Event Handler",
-            $"RouteCompleted handled for '{notification.RobotName}' — duration: {notification.Duration.TotalSeconds:F1}s");
+            $"RouteCompleted → PushStatistics handler for '{notification.RobotName}' (duration: {notification.Duration.TotalSeconds:F1}s)");
 
         var jobId = jobClient.Enqueue<IPushStatisticsJob>(
             j => j.ExecuteAsync(notification.RobotId, CancellationToken.None));
@@ -29,7 +33,8 @@ public sealed class RouteCompletedEventHandler(
 }
 
 /// <summary>
-/// Interface for the statistics push job — keeps Application decoupled from Infrastructure types.
+/// Interface for the statistics push job.
+/// Defined in Application so Infrastructure remains decoupled from handler code.
 /// </summary>
 public interface IPushStatisticsJob
 {
